@@ -7,6 +7,8 @@ node-libxml-xsd
 
 *XSD validation for node.js using [libxml](http://xmlsoft.org/)*
 
+This fork adds support for passing [libxml parser options](https://github.com/libxmljs/libxmljs/wiki/Libxmljs#parser-options) to `parse()` and `parseFile()`.
+
 Installation
 ------------
 
@@ -44,7 +46,7 @@ It is possible to work with libxmljs documents instead of strings as inputs to t
 Imports and includes
 --------------------
 
-XSD includes are supported but relative paths must be given from the execution directory, usually the root of the project.
+XSD includes are supported. By default, paths are relative to the XSD file when using `parseFile()` and the execution directory when using `parse()`. You can change where paths are relative to by setting the `baseUrl` option.
 
 Includes are resolved when parsing the schema. Therefore the parsing task becomes IO bound, which is why you should not use synchronous parsing when you expect some includes.
 
@@ -89,8 +91,8 @@ Node.js bindings for XSD validation from libxml
 * [libxml-xsd](#module_libxml-xsd)
     * _static_
         * [.libxmljs](#module_libxml-xsd.libxmljs)
-        * [.parse(source, [callback])](#module_libxml-xsd.parse) ⇒ <code>Schema</code>
-        * [.parseFile(sourcePath, callback)](#module_libxml-xsd.parseFile)
+        * [.parse(source, [options], [callback])](#module_libxml-xsd.parse) ⇒ <code>Schema</code>
+        * [.parseFile(sourcePath, [options], callback)](#module_libxml-xsd.parseFile)
     * _inner_
         * [~Schema](#module_libxml-xsd..Schema)
             * [new Schema(schemaDoc, schemaObj)](#new_module_libxml-xsd..Schema_new)
@@ -107,10 +109,8 @@ The libxmljs module. Prevents the need for a user's code to require it a second 
 **Kind**: static property of [<code>libxml-xsd</code>](#module_libxml-xsd)  
 <a name="module_libxml-xsd.parse"></a>
 
-### libxml-xsd.parse(source, [callback]) ⇒ <code>Schema</code>
-Parse a XSD schema
-
-If no callback is given the function will run synchronously and return the result or throw an error.
+### libxml-xsd.parse(source, [options], [callback]) ⇒ <code>Schema</code>
+Parse a XSD schemaIf no callback is given the function will run synchronously and return the result or throw an error.
 
 **Kind**: static method of [<code>libxml-xsd</code>](#module_libxml-xsd)  
 **Returns**: <code>Schema</code> - Only if no callback is given.  
@@ -118,11 +118,12 @@ If no callback is given the function will run synchronously and return the resul
 | Param | Type | Description |
 | --- | --- | --- |
 | source | <code>string</code> \| <code>Document</code> | The content of the schema as a string or a [libxmljs document](https://github.com/polotek/libxmljs/wiki/Document) |
+| [options] | <code>ParserOptions</code> | [libxmljs parser options](https://github.com/libxmljs/libxmljs/wiki/Libxmljs#parser-options) |
 | [callback] | <code>parseCallback</code> | The callback that handles the response. Expects err and Schema object. |
 
 <a name="module_libxml-xsd.parseFile"></a>
 
-### libxml-xsd.parseFile(sourcePath, callback)
+### libxml-xsd.parseFile(sourcePath, [options], callback)
 Parse a XSD schema
 
 **Kind**: static method of [<code>libxml-xsd</code>](#module_libxml-xsd)  
@@ -130,6 +131,7 @@ Parse a XSD schema
 | Param | Type | Description |
 | --- | --- | --- |
 | sourcePath | <code>stringPath</code> | The path of the file |
+| [options] | <code>ParserOptions</code> | [libxmljs parser options](https://github.com/libxmljs/libxmljs/wiki/Libxmljs#parser-options) |
 | callback | <code>parseFileCallback</code> | The callback that handles the response. Expects err and Schema object. |
 
 <a name="module_libxml-xsd..Schema"></a>
@@ -145,10 +147,7 @@ Parse a XSD schema
 <a name="new_module_libxml-xsd..Schema_new"></a>
 
 #### new Schema(schemaDoc, schemaObj)
-A compiled schema. Do not call this constructor, instead use parse or parseFile.
-
-store both the source document and the parsed schema
-if we don't store the schema doc it will be deleted by garbage collector and it will result in segfaults.
+A compiled schema. Do not call this constructor, instead use parse or parseFile.store both the source document and the parsed schemaif we don't store the schema doc it will be deleted by garbage collector and it will result in segfaults.
 
 
 | Param | Type | Description |
@@ -159,9 +158,7 @@ if we don't store the schema doc it will be deleted by garbage collector and it 
 <a name="module_libxml-xsd..Schema+validate"></a>
 
 #### schema.validate(source, [callback]) ⇒ <code>string</code> \| <code>Document</code>
-Validate a XML document over a schema
-
-If no callback is given the function will run synchronously and return the result or throw an error.
+Validate a XML document over a schemaIf no callback is given the function will run synchronously and return the result or throw an error.
 
 **Kind**: instance method of [<code>Schema</code>](#module_libxml-xsd..Schema)  
 **Returns**: <code>string</code> \| <code>Document</code> - Only if no callback is given. An array of validation errors, null if none.  
