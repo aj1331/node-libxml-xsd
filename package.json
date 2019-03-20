@@ -1,6 +1,6 @@
 {
-  "name": "libxml-xsd",
-  "version": "0.5.2",
+  "name": "@slc3/libxml-xsd",
+  "version": "1.0.0",
   "description": "XSD validator based on libxml",
   "main": "index.js",
   "scripts": {
