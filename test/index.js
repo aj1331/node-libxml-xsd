@@ -5,10 +5,12 @@ var should = require('should');
 var xsd = require('../index');
 var libxmljs = xsd.libxmljs;
 
+var schemaSourcePath = './test/resources/chapter04ord1.xsd';
+
 describe('node-libxml-xsd', function() {
 	var schemaSource;
 	before(function(callback) {
-		fs.readFile('./test/resources/chapter04ord1.xsd', 'utf8', function(err, data) {
+		fs.readFile(schemaSourcePath, 'utf8', function(err, data) {
 			schemaSource = data;
 			callback(err);
 		});
@@ -24,12 +26,12 @@ describe('node-libxml-xsd', function() {
 	var schema;
 	describe('synchronous parse function', function() {
 		it('should parse a schema from a libxmljs xml document', function() {
-			var schemaDoc = libxmljs.parseXml(schemaSource);
+			var schemaDoc = libxmljs.parseXml(schemaSource, { baseUrl: schemaSourcePath });
 			schema = xsd.parse(schemaDoc);
 			schema.should.be.type('object');
 		});
 		it('should parse a schema from a xml string', function() {
-			schema = xsd.parse(schemaSource);
+			schema = xsd.parse(schemaSource, { baseUrl: schemaSourcePath });
 			schema.should.be.type('object');
 		});
 		it('should throw an error when parsing invalid schema', function() {
@@ -50,14 +52,14 @@ describe('node-libxml-xsd', function() {
 
 	describe('asynchronous parse function', function() {
 		it('should parse a schema from a libxmljs xml document', function(callback) {
-			var schemaDoc = libxmljs.parseXml(schemaSource);
+			var schemaDoc = libxmljs.parseXml(schemaSource, { baseUrl: schemaSourcePath });
 			xsd.parse(schemaDoc, function(err, schema) {
 				schema.should.be.type('object');
 				callback(err);
 			});
 		});
 		it('should parse a schema from a xml string', function(callback) {
-			xsd.parse(schemaSource, function(err, schema) {
+			xsd.parse(schemaSource, { baseUrl: schemaSourcePath }, function(err, schema) {
 				schema.should.be.type('object');
 				callback(err);
 			});

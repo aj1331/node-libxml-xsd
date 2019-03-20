@@ -44,7 +44,7 @@ It is possible to work with libxmljs documents instead of strings as inputs to t
 Imports and includes
 --------------------
 
-XSD includes are supported but relative paths must be given from the execution directory, usually the root of the project.
+XSD includes are supported. By default, paths are relative to the XSD file when using `parseFile()` and the execution directory when using `parse()`. You can change where paths are relative to by setting the `baseUrl` option.
 
 Includes are resolved when parsing the schema. Therefore the parsing task becomes IO bound, which is why you should not use synchronous parsing when you expect some includes.
 

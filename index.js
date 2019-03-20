@@ -33,14 +33,21 @@ var Schema = function(schemaDoc, schemaObj){
  * If no callback is given the function will run synchronously and return the result or throw an error.
  *
  * @param {string|Document} source - The content of the schema as a string or a [libxmljs document]{@link https://github.com/polotek/libxmljs/wiki/Document}
+ * @param {ParserOptions} [options] - [libxmljs parser options]{@link https://github.com/libxmljs/libxmljs/wiki/Libxmljs#parser-options}
  * @param {parseCallback} [callback] - The callback that handles the response. Expects err and Schema object.
  * @return {Schema} Only if no callback is given.
  */
-exports.parse = function(source, callback) {
+exports.parse = function(source, options, callback) {
+	if (typeof options === 'function') {
+		callback = options;
+		options = undefined;
+	}
+	options = options || {};
+
 	// schema can be given as a string or a pre-parsed xml document
 	if (typeof source === 'string') {
 		try {
-			source = libxmljs.parseXml(source);
+			source = libxmljs.parseXml(source, options);
 		} catch (err) {
 			if (callback) return callback(err);
 			throw err;
@@ -67,12 +74,18 @@ exports.parse = function(source, callback) {
  * Parse a XSD schema
  *
  * @param {stringPath} sourcePath - The path of the file
+ * @param {ParserOptions} [options] - [libxmljs parser options]{@link https://github.com/libxmljs/libxmljs/wiki/Libxmljs#parser-options}
  * @param {parseFileCallback} callback - The callback that handles the response. Expects err and Schema object.
  */
-exports.parseFile = function(sourcePath, callback) {
+exports.parseFile = function(sourcePath, options, callback) {
+	if (typeof options === 'function') {
+		callback = options;
+		options = undefined;
+	}
+	options = Object.assign({ baseUrl: sourcePath }, options);
 	fs.readFile(sourcePath, 'utf8', function(err, data){
 		if (err) return callback(err);
-		exports.parse(data, callback);
+		exports.parse(data, options, callback);
 	});
 };
 /**
